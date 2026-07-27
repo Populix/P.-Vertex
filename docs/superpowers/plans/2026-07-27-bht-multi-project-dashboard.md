@@ -16,6 +16,7 @@
 - Admin routes require the existing HMAC session cookie pattern (`ADMIN_COOKIE_NAME`, `verifySessionToken`) — copy `admin-auth.ts` verbatim, no new auth mechanism.
 - Public dashboard routes (`/d/[slug]` and its data API) require no authentication, matching the existing no-login client-view requirement.
 - Slugs are immutable once a project leaves `status: "empty"`.
+- `bht-hub/` is its own nested git repository, gitignored from the parent repo — same pattern as `dashboard/` (which has its own `.git` and its own GitHub remote, `archiepro/p-hansel-bht-dashboard`, deployed independently). The parent repo's `.gitignore` already has a `bht-hub/` entry. **Every commit step in this plan runs `cd bht-hub` first and stages paths relative to `bht-hub/` (not prefixed with it)** — e.g. `git add src/lib/slug.ts`, not `git add bht-hub/src/lib/slug.ts`. Task 1 initializes this repo before any other task commits into it.
 
 ---
 
@@ -36,10 +37,13 @@
 **Interfaces:**
 - Produces: a runnable `bht-hub` Next.js app (`npm run dev` on port 3100) and a runnable `npm run test` (Vitest) that later tasks add test files to.
 
-- [ ] **Step 1: Create the directory and package.json**
+- [ ] **Step 1: Create the directory, init it as its own git repo, and add package.json**
+
+`bht-hub/` is a standalone app with its own history and (eventually) its own remote, exactly like `dashboard/` — not a subdirectory tracked by the parent repo. The parent's `.gitignore` already excludes `bht-hub/`.
 
 ```bash
 mkdir -p "bht-hub/src/app"
+cd bht-hub && git init
 ```
 
 ```json
@@ -144,7 +148,7 @@ Expected: `No test files found` (not an error) — confirms the runner and alias
 - [ ] **Step 7: Commit**
 
 ```bash
-git add bht-hub/package.json bht-hub/tsconfig.json bht-hub/next.config.ts bht-hub/postcss.config.mjs bht-hub/eslint.config.mjs bht-hub/vitest.config.ts bht-hub/components.json bht-hub/.gitignore bht-hub/src/app/globals.css bht-hub/src/app/tokens.css bht-hub/src/app/layout.tsx bht-hub/src/app/page.tsx bht-hub/package-lock.json
+cd bht-hub && git add package.json tsconfig.json next.config.ts postcss.config.mjs eslint.config.mjs vitest.config.ts components.json .gitignore src/app/globals.css src/app/tokens.css src/app/layout.tsx src/app/page.tsx package-lock.json
 git commit -m "feat(bht-hub): scaffold new multi-project Next.js app"
 ```
 
@@ -264,7 +268,7 @@ Expected: PASS (2 tests).
 - [ ] **Step 5: Commit**
 
 ```bash
-git add bht-hub/config/question-code-map.json bht-hub/src/lib/server/build-data.ts bht-hub/src/lib/server/build-data.test.ts bht-hub/src/lib/types.ts
+cd bht-hub && git add config/question-code-map.json src/lib/server/build-data.ts src/lib/server/build-data.test.ts src/lib/types.ts
 git commit -m "feat(bht-hub): port BHT data pipeline, add question-code validation"
 ```
 
@@ -346,7 +350,7 @@ Expected: PASS (4 tests).
 - [ ] **Step 5: Commit**
 
 ```bash
-git add bht-hub/src/lib/slug.ts bht-hub/src/lib/slug.test.ts
+cd bht-hub && git add src/lib/slug.ts src/lib/slug.test.ts
 git commit -m "feat(bht-hub): add slug generation utility"
 ```
 
@@ -521,7 +525,7 @@ Expected: PASS (2 tests).
 - [ ] **Step 5: Commit**
 
 ```bash
-git add bht-hub/src/lib/server/blob-store.ts bht-hub/src/lib/server/blob-store.test.ts
+cd bht-hub && git add src/lib/server/blob-store.ts src/lib/server/blob-store.test.ts
 git commit -m "feat(bht-hub): add slug-namespaced blob/local-fs storage layer"
 ```
 
@@ -704,7 +708,7 @@ Expected: PASS (5 tests).
 - [ ] **Step 6: Commit**
 
 ```bash
-git add bht-hub/src/lib/project.ts bht-hub/src/lib/server/project-store.ts bht-hub/src/lib/server/project-store.test.ts
+cd bht-hub && git add src/lib/project.ts src/lib/server/project-store.ts src/lib/server/project-store.test.ts
 git commit -m "feat(bht-hub): add project domain model and storage"
 ```
 
@@ -824,7 +828,7 @@ Expected: login returns `{"ok":true}` with a `Set-Cookie` header; session check 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add bht-hub/src/lib/server/admin-auth.ts bht-hub/src/lib/utils.ts bht-hub/src/components/ui bht-hub/src/app/api/admin/login bht-hub/src/app/api/admin/logout bht-hub/src/app/api/admin/session
+cd bht-hub && git add src/lib/server/admin-auth.ts src/lib/utils.ts src/components/ui src/app/api/admin/login src/app/api/admin/logout src/app/api/admin/session
 git commit -m "feat(bht-hub): port admin session auth and shadcn ui primitives"
 ```
 
@@ -901,7 +905,7 @@ Expected: POST returns `{"project":{"slug":"great-eastern-2026","clientName":"Gr
 - [ ] **Step 3: Commit**
 
 ```bash
-git add bht-hub/src/app/api/admin/projects
+cd bht-hub && git add src/app/api/admin/projects
 git commit -m "feat(bht-hub): add project create/list API"
 ```
 
@@ -1061,7 +1065,7 @@ Also verify the rejection path with a file that isn't the BHT format (any unrela
 - [ ] **Step 4: Commit**
 
 ```bash
-git add "bht-hub/src/app/api/admin/projects/[slug]/upload-chunk" "bht-hub/src/app/api/admin/projects/[slug]/upload-finish"
+cd bht-hub && git add "src/app/api/admin/projects/[slug]/upload-chunk" "src/app/api/admin/projects/[slug]/upload-finish"
 git commit -m "feat(bht-hub): add slug-scoped upload flow with question-code validation"
 ```
 
@@ -1166,7 +1170,7 @@ Expected: `publish` returns `{"project":{...,"status":"locked"}}`; the subsequen
 - [ ] **Step 4: Commit**
 
 ```bash
-git add "bht-hub/src/app/api/admin/projects/[slug]/publish" "bht-hub/src/app/api/admin/projects/[slug]/unlock"
+cd bht-hub && git add "src/app/api/admin/projects/[slug]/publish" "src/app/api/admin/projects/[slug]/unlock"
 git commit -m "feat(bht-hub): add publish/unlock lifecycle for Final-type projects"
 ```
 
@@ -1501,7 +1505,7 @@ Open `http://localhost:3100/admin`, log in, confirm the projects created in Task
 - [ ] **Step 6: Commit**
 
 ```bash
-git add bht-hub/src/app/admin bht-hub/src/components/admin
+cd bht-hub && git add src/app/admin src/components/admin
 git commit -m "feat(bht-hub): add admin project list and create-project UI"
 ```
 
@@ -1744,7 +1748,7 @@ Visit `http://localhost:3100/admin/projects/great-eastern-2026`, upload the real
 - [ ] **Step 4: Commit**
 
 ```bash
-git add "bht-hub/src/app/admin/projects/[slug]" bht-hub/src/components/admin/project-detail.tsx
+cd bht-hub && git add "src/app/admin/projects/[slug]" src/components/admin/project-detail.tsx
 git commit -m "feat(bht-hub): add project detail admin page with upload and publish/unlock"
 ```
 
@@ -1954,7 +1958,7 @@ Expected: first returns `{"project":{...,"dataType":"progress","status":"active"
 - [ ] **Step 5: Commit**
 
 ```bash
-git add "bht-hub/src/app/api/d/[slug]" bht-hub/src/context bht-hub/src/lib/tally.ts bht-hub/src/lib/chart-colors.ts bht-hub/src/lib/progress-lookup.ts
+cd bht-hub && git add "src/app/api/d/[slug]" src/context src/lib/tally.ts src/lib/chart-colors.ts src/lib/progress-lookup.ts
 git commit -m "feat(bht-hub): add public per-project data API and dashboard context"
 ```
 
@@ -2178,7 +2182,7 @@ Check, for each state:
 - [ ] **Step 7: Commit**
 
 ```bash
-git add bht-hub/src/components/dashboard "bht-hub/src/app/d/[slug]"
+cd bht-hub && git add src/components/dashboard "src/app/d/[slug]"
 git commit -m "feat(bht-hub): add data-type-aware public dashboard"
 ```
 
@@ -2246,7 +2250,7 @@ Expected: build succeeds with no type errors across every route added in Tasks 6
 - [ ] **Step 5: Commit**
 
 ```bash
-git add bht-hub/README.md bht-hub/.env.example
+cd bht-hub && git add README.md .env.example
 git commit -m "docs(bht-hub): add README and env example"
 ```
 
