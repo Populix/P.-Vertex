@@ -1717,9 +1717,11 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
 
 ```typescript
 // bht-hub/src/app/admin/projects/[slug]/page.tsx
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 import { ProjectDetail } from "@/components/admin/project-detail";
+import { ADMIN_COOKIE_NAME, verifySessionToken } from "@/lib/server/admin-auth";
 import { getProject } from "@/lib/server/project-store";
 
 export default async function AdminProjectPage({
@@ -1727,6 +1729,11 @@ export default async function AdminProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const cookieStore = await cookies();
+  if (!verifySessionToken(cookieStore.get(ADMIN_COOKIE_NAME)?.value)) {
+    redirect("/admin");
+  }
+
   const { slug } = await params;
   const project = await getProject(slug);
   if (!project) notFound();
@@ -1739,7 +1746,7 @@ export default async function AdminProjectPage({
 }
 ```
 
-Note: this page reads `getProject` directly server-side (no client-side auth check) — acceptable because Next.js still requires the `/api/admin/*` mutation routes behind the session cookie; the page itself renders read-only project metadata already visible from the public `/d/[slug]` link (client name, data type, status), nothing sensitive.
+This page is gated the same way the Global Constraints require for every admin route: a missing/invalid session cookie redirects to `/admin` (which shows the login form) instead of rendering project details. The mutating actions inside `ProjectDetail` (upload, publish, unlock) are still independently protected by their own API routes' session checks — this page-level gate is defense-in-depth, not a substitute for it.
 
 - [ ] **Step 3: Manual verification**
 
