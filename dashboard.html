@@ -46,6 +46,15 @@ body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color
 .filters .count{margin-left:auto;font-size:13px;color:var(--sub);}
 .filters .count b{color:var(--navy);font-size:16px;}
 .resetbtn{background:var(--teal);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;}
+.fgroup{position:relative;}
+.fbtn{padding:6px 28px 6px 8px;border:1px solid var(--line);border-radius:6px;font-size:13px;min-width:150px;max-width:220px;background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="%235C6B80" fill="none" stroke-width="1.5"/></svg>') no-repeat right 8px center;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+.fbtn:focus{outline:2px solid var(--teal-light);outline-offset:1px;}
+.fmenu{display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(11,37,69,.15);min-width:210px;max-height:260px;overflow-y:auto;z-index:20;padding:4px 0;}
+.fmenu.open{display:block;}
+.fitem{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:13px;color:var(--ink);cursor:pointer;white-space:nowrap;}
+.fitem:hover{background:var(--bg);}
+.fitem input{margin:0;cursor:pointer;}
+.fitem-all{font-weight:600;border-bottom:1px solid var(--line);margin-bottom:2px;padding-bottom:8px;}
 .content{padding:22px 24px 60px;max-width:1400px;margin:0 auto;}
 .page{display:none;}
 .page.active{display:block;}
@@ -111,26 +120,30 @@ table.simple th{color:var(--sub);font-weight:700;text-transform:uppercase;font-s
   <div class="tab" data-page="demography">Demography</div>
   <div class="tab" data-page="awareness">Awareness</div>
   <div class="tab" data-page="npscsat">NPS &amp; CSAT</div>
-  <div class="tab" data-page="brandmedia">Brand &amp; Media</div>
   <div class="tab" data-page="brandequity">Brand Equity</div>
+  <div class="tab" data-page="brandmedia">Media</div>
 </div>
 
 <div class="filters">
-  <div>
+  <div class="fgroup">
     <label>Kota</label>
-    <select id="f_city"><option value="">Semua Kota</option></select>
+    <button type="button" class="fbtn" id="f_city_btn">Semua Kota</button>
+    <div class="fmenu" id="f_city_menu"></div>
   </div>
-  <div>
+  <div class="fgroup">
     <label>Jenis Kelamin</label>
-    <select id="f_gender"><option value="">Semua</option></select>
+    <button type="button" class="fbtn" id="f_gender_btn">Semua</button>
+    <div class="fmenu" id="f_gender_menu"></div>
   </div>
-  <div>
+  <div class="fgroup">
     <label>Usia</label>
-    <select id="f_age"><option value="">Semua Usia</option></select>
+    <button type="button" class="fbtn" id="f_age_btn">Semua Usia</button>
+    <div class="fmenu" id="f_age_menu"></div>
   </div>
-  <div>
+  <div class="fgroup">
     <label>SEC</label>
-    <select id="f_sec"><option value="">Semua SEC</option></select>
+    <button type="button" class="fbtn" id="f_sec_btn">Semua SEC</button>
+    <div class="fmenu" id="f_sec_menu"></div>
   </div>
   <button class="resetbtn" id="resetBtn">Reset Filter</button>
   <div class="count">Base tersaring: <b id="filteredN">500</b> / 500 responden</div>
@@ -144,7 +157,7 @@ table.simple th{color:var(--sub);font-weight:700;text-transform:uppercase;font-s
     <h2 class="sec">Kesehatan Merek TransJakarta — Ringkasan Funnel</h2>
     <div class="grid g2">
       <div class="card"><h3>Funnel Perjalanan Konsumen (TransJakarta)</h3><div class="med"><div class="chart-wrap"><canvas id="chOvFunnel"></canvas></div></div></div>
-      <div class="card"><h3>Top of Mind vs Aided Awareness — Top 6 Moda</h3><div class="med"><div class="chart-wrap"><canvas id="chOvAware"></canvas></div></div></div>
+      <div class="card"><h3>Top of Mind vs Total Awareness — Top 6 Moda</h3><div class="med"><div class="chart-wrap"><canvas id="chOvAware"></canvas></div></div></div>
     </div>
     <div class="grid g2" style="margin-top:16px;">
       <div class="card"><h3>NPS per Moda (semua pengguna)</h3><div class="med"><div class="chart-wrap"><canvas id="chOvNPS"></canvas></div></div></div>
@@ -176,9 +189,9 @@ table.simple th{color:var(--sub);font-weight:700;text-transform:uppercase;font-s
   <!-- AWARENESS -->
   <div class="page" id="page-awareness">
     <div class="grid g3" id="aw-kpis"></div>
-    <h2 class="sec">Unaided Awareness (Top of Mind)</h2>
+    <h2 class="sec">Top of Mind Awareness</h2>
     <div class="card"><h3>Moda transportasi umum yang pertama kali disebutkan (S10a)</h3><div class="taller"><div class="chart-wrap"><canvas id="chAwUnaided"></canvas></div></div></div>
-    <h2 class="sec">Aided Awareness</h2>
+    <h2 class="sec">Total Awareness</h2>
     <div class="card"><h3>% Responden yang mengenal/pernah melihat/dengar setiap moda (S10c)</h3><div class="taller"><div class="chart-wrap"><canvas id="chAwAided"></canvas></div></div></div>
     <h2 class="sec">Usage Funnel per Moda</h2>
     <div class="card"><h3>Ever Used vs Used Last 1 Month</h3><div class="taller"><div class="chart-wrap"><canvas id="chAwUsage"></canvas></div></div></div>
@@ -187,10 +200,10 @@ table.simple th{color:var(--sub);font-weight:700;text-transform:uppercase;font-s
     <div class="card">
       <div class="fpGrid">
         <div class="fpCol"><div class="fpHead" style="background:#C94C4C">LOW PRIORITY</div>
-          <ul><li>Frekuensi kedatangan moda ini cukup sering</li><li>Terintegrasi dengan moda lain</li><li>Petugas ramah dan membantu</li></ul>
+          <ul><li>Frekuensi kedatangan moda ini cukup sering</li></ul>
         </div>
         <div class="fpCol"><div class="fpHead" style="background:#E58E26">LATENT MOTIVATOR</div>
-          <ul><li>Jumlah penumpang tidak terlalu padat</li></ul>
+          <ul><li>Jumlah penumpang tidak terlalu padat</li><li>Terintegrasi dengan moda lain</li><li>Petugas ramah dan membantu</li></ul>
         </div>
         <div class="fpCol"><div class="fpHead" style="background:#37B7A8">HYGIENE FACTOR</div>
           <ul><li>Pengemudi/operator berkendara dengan aman</li><li>Cara pembayaran mudah dan praktis</li><li>Rute yang tersedia sesuai dengan kebutuhan perjalanan saya</li><li>Armada/kendaraan terawat dengan baik</li><li>Tersedia petugas/sistem keamanan yang dapat diandalkan</li><li>Informasi kedatangan tersedia secara real-time dan akurat</li></ul>
@@ -222,8 +235,6 @@ table.simple th{color:var(--sub);font-weight:700;text-transform:uppercase;font-s
 
   <!-- BRAND & MEDIA -->
   <div class="page" id="page-brandmedia">
-    <h2 class="sec">Brand Imagery — Asosiasi Atribut dengan TransJakarta</h2>
-    <div class="card"><h3>% Responden yang mengasosiasikan atribut berikut dengan TransJakarta (dari yang memilih moda manapun)</h3><div class="taller"><div class="chart-wrap"><canvas id="chBrandImg"></canvas></div></div></div>
     <h2 class="sec">Media Consumption</h2>
     <div class="grid g2">
       <div class="card"><h3>Kanal Media yang Rutin Diakses (3 Bulan Terakhir) — M1</h3><div class="taller"><div class="chart-wrap"><canvas id="chMedia"></canvas></div></div></div>
@@ -233,6 +244,8 @@ table.simple th{color:var(--sub);font-weight:700;text-transform:uppercase;font-s
 
   <!-- BRAND EQUITY -->
   <div class="page" id="page-brandequity">
+    <h2 class="sec">Perceptions</h2>
+    <div class="card"><h3>% Responden yang mengasosiasikan atribut berikut dengan TransJakarta (dari yang memilih moda manapun)</h3><div class="taller"><div class="chart-wrap"><canvas id="chBrandImg"></canvas></div></div></div>
     <h2 class="sec">Posisi Brand</h2>
     <div class="card">
       <div class="grid g2">
@@ -304,36 +317,86 @@ function commonScale(extra){ return Object.assign({ grid: GRID, border: AXIS_LIN
 
 function uniq(arr){ return [...new Set(arr.filter(v=>v!==null && v!==undefined))]; }
 
-// populate filter dropdowns
-function fillSelect(id, values){
-  const sel = document.getElementById(id);
-  values.forEach(v=>{
-    const o = document.createElement('option');
-    o.value = v; o.textContent = v;
-    sel.appendChild(o);
+// ---- multi-select filter dropdowns (checkbox menus; "Semua" is exclusive select-all) ----
+const filterState = { city:[], gender:[], age:[], sec:[] };
+
+function buildFilterMenu(key, values, allLabel){
+  const menu = document.getElementById('f_'+key+'_menu');
+  const btn = document.getElementById('f_'+key+'_btn');
+  menu.addEventListener('click', e=>e.stopPropagation());
+  const allRow = document.createElement('label');
+  allRow.className = 'fitem fitem-all';
+  const allCb = document.createElement('input');
+  allCb.type = 'checkbox'; allCb.checked = true;
+  allRow.appendChild(allCb);
+  allRow.appendChild(document.createTextNode(allLabel));
+  menu.appendChild(allRow);
+
+  const boxes = values.map(v=>{
+    const row = document.createElement('label');
+    row.className = 'fitem';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.value = v;
+    row.appendChild(cb);
+    row.appendChild(document.createTextNode(v));
+    menu.appendChild(row);
+    return cb;
   });
+
+  function refreshLabel(){
+    const n = filterState[key].length;
+    btn.textContent = n===0 ? allLabel : (n===1 ? filterState[key][0] : `${n} dipilih`);
+  }
+
+  allCb.addEventListener('change', ()=>{
+    allCb.checked = true; // "Semua" can't be turned off on its own — pick a specific value instead
+    boxes.forEach(b=>b.checked=false);
+    filterState[key] = [];
+    refreshLabel(); renderAll();
+  });
+  boxes.forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      filterState[key] = boxes.filter(b=>b.checked).map(b=>b.value);
+      allCb.checked = filterState[key].length===0;
+      refreshLabel(); renderAll();
+    });
+  });
+
+  return { boxes, allCb, refreshLabel };
 }
-fillSelect('f_city', uniq(ALL.map(r=>r.city)).sort());
-fillSelect('f_gender', uniq(ALL.map(r=>r.gender)).sort());
+
+const filterMenus = {};
+document.querySelectorAll('.fgroup').forEach(g=>{
+  const btn = g.querySelector('.fbtn');
+  btn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const menu = g.querySelector('.fmenu');
+    const isOpen = menu.classList.contains('open');
+    document.querySelectorAll('.fmenu.open').forEach(m=>m.classList.remove('open'));
+    if(!isOpen) menu.classList.add('open');
+  });
+});
+document.addEventListener('click', ()=>{
+  document.querySelectorAll('.fmenu.open').forEach(m=>m.classList.remove('open'));
+});
+
+filterMenus.city = buildFilterMenu('city', uniq(ALL.map(r=>r.city)).sort(), 'Semua Kota');
+filterMenus.gender = buildFilterMenu('gender', uniq(ALL.map(r=>r.gender)).sort(), 'Semua');
 const ageOrder = ['18 - 27 tahun','28 - 35 tahun','36 - 45 tahun','46 - 55 tahun','56 - 60 tahun','Diatas 60 tahun'];
-ageOrder.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; document.getElementById('f_age').appendChild(o); });
+filterMenus.age = buildFilterMenu('age', ageOrder, 'Semua Usia');
 const secOrder = ['5 – 7 (Lower 1)','8 – 10 (Middle 2)','11 – 12 (Middle 1)','13 – 14 (Upper 2)','15 – 18 (Upper 1)'];
 const secRank = s=> secOrder.indexOf(s);
-fillSelect('f_sec', uniq(ALL.map(r=>r.sec)).sort((a,b)=>secRank(a)-secRank(b)));
+filterMenus.sec = buildFilterMenu('sec', uniq(ALL.map(r=>r.sec)).sort((a,b)=>secRank(a)-secRank(b)), 'Semua SEC');
 
 let charts = {};
 function destroyChart(key){ if(charts[key]){ charts[key].destroy(); delete charts[key]; } }
 
 function getFiltered(){
-  const c = document.getElementById('f_city').value;
-  const g = document.getElementById('f_gender').value;
-  const a = document.getElementById('f_age').value;
-  const s = document.getElementById('f_sec').value;
   return ALL.filter(r=>
-    (!c || r.city===c) &&
-    (!g || r.gender===g) &&
-    (!a || r.age===a) &&
-    (!s || r.sec===s)
+    (!filterState.city.length || filterState.city.includes(r.city)) &&
+    (!filterState.gender.length || filterState.gender.includes(r.gender)) &&
+    (!filterState.age.length || filterState.age.includes(r.age)) &&
+    (!filterState.sec.length || filterState.sec.includes(r.sec))
   );
 }
 
@@ -402,8 +465,8 @@ function barChart(id,labels,dataset,color,horizontal=true,suffix='%'){
         }}
       },
       scales:{
-        x:{ display:true, beginAtZero:true, grid:GRID, border:AXIS_LINE, ticks:{ callback:(v)=> horizontal? v+suffix : v } },
-        y:{ grid: horizontal? {display:false} : GRID, border:AXIS_LINE, ticks:{ autoSkip:false, font:{size:11} } }
+        x:{ display:true, beginAtZero: horizontal, grid: horizontal? GRID : {display:false}, border:AXIS_LINE, ticks:{ callback:function(v){ return horizontal ? v+suffix : this.getLabelForValue(v); }, autoSkip:false, font:{size:11} } },
+        y:{ beginAtZero: !horizontal, grid: horizontal? {display:false} : GRID, border:AXIS_LINE, ticks:{ autoSkip:false, font:{size:11}, callback:function(v){ return horizontal ? this.getLabelForValue(v) : v+suffix; } } }
       }
     }
   });
@@ -529,14 +592,14 @@ function renderOverview(data){
   const csatTop2 = pct(csatVals.filter(v=>v>=4).length, csatVals.length);
 
   document.getElementById('ov-kpis').innerHTML = [
-    kpiCard('Unaided Awareness TJ', unaidedTJ+'%','Top of mind mentions','#13315C'),
-    kpiCard('Aided Awareness TJ', aidedTJ+'%','Kenal / pernah lihat/dengar','#0E7C7B'),
+    kpiCard('Top of Mind Awareness TJ', unaidedTJ+'%','Top of mind mentions','#13315C'),
+    kpiCard('Total Awareness TJ', aidedTJ+'%','Kenal / pernah lihat/dengar','#0E7C7B'),
     kpiCard('NPS TransJakarta', npsScore, '% Promoter − % Detractor','#E58E26'),
     kpiCard('CSAT Top-2-Box TJ', csatTop2+'%','Puas + Sangat Puas Sekali','#37B7A8'),
   ].join('');
 
   const everTJ = pct(data.filter(r=>r.ever_used.includes(TJ)).length,n);
-  lineOrBarFunnel('chOvFunnel', ['Aided Awareness','Ever Used','Used Last 1 Month','Most Used'],
+  lineOrBarFunnel('chOvFunnel', ['Total Awareness','Ever Used','Used Last 1 Month','Most Used'],
     [aidedTJ, everTJ, usedTJ, pct(data.filter(r=>r.most_used===TJ).length,n)]);
 
   // top 6 modes by aided awareness
@@ -545,8 +608,8 @@ function renderOverview(data){
     aided: pct(data.filter(r=>r.aided.includes(m)).length,n)
   })).sort((a,b)=>b.aided-a.aided).slice(0,6);
   multiBar('chOvAware', modeStats.map(x=>x.m), [
-    {label:'Unaided (Top of Mind)', data:modeStats.map(x=>x.unaided), backgroundColor:'#13315C', borderRadius:4},
-    {label:'Aided Awareness', data:modeStats.map(x=>x.aided), backgroundColor:'#37B7A8', borderRadius:4}
+    {label:'Top of Mind', data:modeStats.map(x=>x.unaided), backgroundColor:'#13315C', borderRadius:4},
+    {label:'Total Awareness', data:modeStats.map(x=>x.aided), backgroundColor:'#37B7A8', borderRadius:4}
   ]);
 
   const npsByMode = MODES.map(m=>{
@@ -576,8 +639,8 @@ function renderDemography(data){
 
   const cities = uniq(data.map(r=>r.city));
   const cityCounts = cities.map(c=>data.filter(r=>r.city===c).length);
-  const order = cityCounts.map((v,i)=>[cities[i],v]).sort((a,b)=>b[1]-a[1]);
-  barChart('chDemoCity', order.map(x=>x[0]), order.map(x=>x[1]), '#0E7C7B', true, '');
+  const order = cityCounts.map((v,i)=>[cities[i],pct(v,n)]).sort((a,b)=>b[1]-a[1]);
+  barChart('chDemoCity', order.map(x=>x[0]), order.map(x=>x[1]), '#0E7C7B', true);
 
   const ageCounts = ageOrder.map(a=>data.filter(r=>r.age===a).length);
   pieChart('chDemoAge', ageOrder, ageCounts);
@@ -605,8 +668,8 @@ function renderDemography(data){
 function renderAwareness(data){
   const n = data.length;
   document.getElementById('aw-kpis').innerHTML = [
-    kpiCard('Unaided TJ', pct(data.filter(r=>r.unaided===TJ).length,n)+'%','Top of mind','#13315C'),
-    kpiCard('Aided TJ', pct(data.filter(r=>r.aided.includes(TJ)).length,n)+'%','Kenal moda','#0E7C7B'),
+    kpiCard('Top of Mind TJ', pct(data.filter(r=>r.unaided===TJ).length,n)+'%','Top of mind','#13315C'),
+    kpiCard('Total Awareness TJ', pct(data.filter(r=>r.aided.includes(TJ)).length,n)+'%','Kenal moda','#0E7C7B'),
     kpiCard('Rerata Moda Dikenal', (data.reduce((s,r)=>s+r.aided.length,0)/n).toFixed(1),'per responden','#E58E26'),
   ].join('');
 
@@ -625,16 +688,14 @@ function renderAwareness(data){
     {label:'Ever Used', data: sortedIdx.map(i=>everStats[i]), backgroundColor:'#13315C', borderRadius:4},
     {label:'Used Last 1 Month', data: sortedIdx.map(i=>usedStats[i]), backgroundColor:'#E58E26', borderRadius:4}
   ], true);
-}
 
-// static, unfiltered — Q3: alasan menggunakan TransJakarta (base = TJ users who answered Q3)
-function renderQ3Reasons(){
-  const base = ALL.filter(r=>r.reasons_tj);
-  const counts = {};
-  base.forEach(r=> r.reasons_tj.forEach(reason=> counts[reason]=(counts[reason]||0)+1));
-  const stats = Object.entries(counts).map(([label,cnt])=>[label, pct(cnt, base.length)]).sort((a,b)=>b[1]-a[1]);
-  growForLabels('chAwQ3Reasons', stats.map(x=>x[0]));
-  barChart('chAwQ3Reasons', stats.map(x=>x[0]), stats.map(x=>x[1]), '#0E7C7B', true);
+  // Q3: alasan menggunakan TransJakarta (base = TJ users who answered Q3, respects active filters)
+  const q3Base = data.filter(r=>r.reasons_tj);
+  const q3Counts = {};
+  q3Base.forEach(r=> r.reasons_tj.forEach(reason=> q3Counts[reason]=(q3Counts[reason]||0)+1));
+  const q3Stats = Object.entries(q3Counts).map(([label,cnt])=>[label, pct(cnt, q3Base.length)]).sort((a,b)=>b[1]-a[1]);
+  growForLabels('chAwQ3Reasons', q3Stats.map(x=>x[0]));
+  barChart('chAwQ3Reasons', q3Stats.map(x=>x[0]), q3Stats.map(x=>x[1]), '#0E7C7B', true);
 }
 
 function renderNpsCsat(data){
@@ -726,17 +787,19 @@ document.querySelectorAll('.tab').forEach(t=>{
   });
 });
 
-['f_city','f_gender','f_age','f_sec'].forEach(id=>{
-  document.getElementById(id).addEventListener('change', renderAll);
-});
 document.getElementById('resetBtn').addEventListener('click', ()=>{
-  ['f_city','f_gender','f_age','f_sec'].forEach(id=> document.getElementById(id).value='');
+  Object.keys(filterMenus).forEach(key=>{
+    const m = filterMenus[key];
+    m.boxes.forEach(b=>b.checked=false);
+    m.allCb.checked = true;
+    filterState[key] = [];
+    m.refreshLabel();
+  });
   renderAll();
 });
 
 document.getElementById('totalN').textContent = ALL.length;
 renderAll();
-renderQ3Reasons();
 
 // static, unfiltered — Brand Equity Index (reference analysis result)
 (function renderBrandEquityIndex(){
@@ -744,7 +807,7 @@ renderQ3Reasons();
     ['Transjakarta',64.9],['KRL Commuter Line',65.7],['MRT',64.7],['LRT',58.7],
     ['Mikrotrans/JakLingko',46.2],['Ojek Online',53.4],['Taksi Online',51.6]
   ].sort((a,b)=>b[1]-a[1]);
-  barChart('chBEIndex', rows.map(x=>x[0]), rows.map(x=>x[1]), '#13315C', true, '');
+  barChart('chBEIndex', rows.map(x=>x[0]), rows.map(x=>x[1]), '#13315C', false, '');
 })();
 </script>
 </body>
