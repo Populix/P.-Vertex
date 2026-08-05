@@ -1,0 +1,15 @@
+.git
+.github
+.claude
+.venv
+.superpowers
+node_modules
+__pycache__
+docs
+scripts
+graphify-out
+Data Source
+Design Template
+*.xlsx
+*.pptx
+.DS_Store
