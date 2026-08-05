@@ -4,13 +4,12 @@ on:
   push:
     branches:
       - master
-      - add-deployment
-    # paths:
-    #   - "index.html"
-    #   - "dashboard.html"
-    #   - "docker/**"
-    #   - ".dockerignore"
-    #   - ".github/workflows/deploy-prod-k8s.yml"
+    paths:
+      - "index.html"
+      - "dashboard.html"
+      - "docker/**"
+      - ".dockerignore"
+      - ".github/workflows/deploy-prod-k8s.yml"
   workflow_dispatch:
 
 concurrency:
