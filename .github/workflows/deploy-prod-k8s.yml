@@ -61,8 +61,6 @@ jobs:
           file: docker/Dockerfile
           tags: ${{ secrets.ECR_REPO_URL }}:vertex-${{ steps.version.outputs.tag }}
           push: true
-          # cache-from: type=gha
-          # cache-to: type=gha,mode=max
 
   deploy:
     environment: prod
